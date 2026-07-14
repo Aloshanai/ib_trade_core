@@ -7,3 +7,10 @@
 # style and format.
 
 include: package:lints/recommended.yaml
+
+linter:
+  rules:
+    - prefer_relative_imports
+    - avoid_print
+    - always_declare_return_types
+    - cancel_subscriptions
