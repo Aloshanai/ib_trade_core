@@ -65,6 +65,24 @@ void main() {
       expect(cookieClient.cookies['JSESSIONID'], equals('abcdef'));
     });
 
+    test('should handle day name cookie date split correctly for all day abbreviations', () async {
+      final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      for (final day in days) {
+        final mockInner = MockClient((request) async {
+          return http.Response('{}', 200, headers: {
+            'set-cookie':
+                'cookie_$day=value; expires=$day, 01-Jan-2030 00:00:00 GMT, session_$day=123',
+          });
+        });
+
+        final cookieClient = CookieClient(mockInner);
+        await cookieClient.get(Uri.parse('https://localhost/api'));
+
+        expect(cookieClient.cookies['cookie_$day'], equals('value'));
+        expect(cookieClient.cookies['session_$day'], equals('123'));
+      }
+    });
+
     test('clearCookies should remove all stored cookies', () async {
       final mockInner = MockClient((request) async {
         return http.Response('{}', 200, headers: {

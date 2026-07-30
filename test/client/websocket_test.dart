@@ -151,5 +151,25 @@ void main() {
 
       await conn.disconnect();
     });
+
+    test('should connect successfully with bypassSslVerification set to true',
+        () async {
+      server.listen((request) async {
+        if (io.WebSocketTransformer.isUpgradeRequest(request)) {
+          final socket = await io.WebSocketTransformer.upgrade(request);
+          socket.listen((data) {});
+        }
+      });
+
+      final conn = IbWebSocketConnection(
+        wsUrl,
+        bypassSslVerification: true,
+      );
+
+      await conn.connect();
+      expect(conn.state, equals(IbWebSocketState.connected));
+
+      await conn.disconnect();
+    });
   });
 }

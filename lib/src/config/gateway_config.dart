@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'platform_env.dart';
 
 /// Connection and session configuration settings for the IBKR Gateway client.
 class GatewayConfig {
@@ -40,7 +40,7 @@ class GatewayConfig {
   /// - `IBKR_GATEWAY_TICKLE_INTERVAL` (default: 45)
   /// - `IBKR_GATEWAY_TIMEOUT` (default: 10)
   factory GatewayConfig.fromEnvironment([Map<String, String>? env]) {
-    final environment = env ?? Platform.environment;
+    final environment = env ?? getPlatformEnvironment();
 
     String getEnv(String key, String defaultValue) {
       return environment[key] ??

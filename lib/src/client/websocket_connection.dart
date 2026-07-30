@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:io' as io;
 import 'dart:math' as math;
 import 'cookie_client.dart';
+import 'websocket_impl.dart';
 
 /// Connection states for the WebSocket connection.
 enum IbWebSocketState {
@@ -18,12 +18,14 @@ enum IbWebSocketState {
 class IbWebSocketConnection {
   final Uri _wsUrl;
   final CookieClient? _cookieClient;
+  final bool _bypassSslVerification;
   final Duration _heartbeatInterval;
   final Duration _initialRetryDelay;
   final Duration _maxRetryDelay;
   final int _maxRetryAttempts;
 
-  io.WebSocket? _socket;
+  BaseWebSocketConnection? _socket;
+  StreamSubscription? _socketSubscription;
   IbWebSocketState _state = IbWebSocketState.disconnected;
   Timer? _heartbeatTimer;
   Timer? _reconnectTimer;
@@ -45,11 +47,13 @@ class IbWebSocketConnection {
   IbWebSocketConnection(
     this._wsUrl, {
     CookieClient? cookieClient,
+    bool bypassSslVerification = false,
     Duration heartbeatInterval = const Duration(seconds: 45),
     Duration initialRetryDelay = const Duration(seconds: 1),
     Duration maxRetryDelay = const Duration(seconds: 60),
     int maxRetryAttempts = 10,
   })  : _cookieClient = cookieClient,
+        _bypassSslVerification = bypassSslVerification,
         _heartbeatInterval = heartbeatInterval,
         _initialRetryDelay = initialRetryDelay,
         _maxRetryDelay = maxRetryDelay,
@@ -83,6 +87,8 @@ class IbWebSocketConnection {
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
     _stopHeartbeat();
+    await _socketSubscription?.cancel();
+    _socketSubscription = null;
 
     if (_socket != null) {
       await _socket!.close();
@@ -120,9 +126,10 @@ class IbWebSocketConnection {
     }
 
     try {
-      _socket = await io.WebSocket.connect(
-        _wsUrl.toString(),
+      _socket = await connectWebSocket(
+        _wsUrl,
         headers: headers,
+        bypassSslVerification: _bypassSslVerification,
       );
 
       _updateState(IbWebSocketState.connected);
@@ -138,7 +145,7 @@ class IbWebSocketConnection {
   void _listenToSocket() {
     if (_socket == null) return;
 
-    _socket!.listen(
+    _socketSubscription = _socket!.stream.listen(
       (message) {
         _messageController.add(message);
       },
@@ -155,6 +162,8 @@ class IbWebSocketConnection {
 
   void _handleDisconnectOrError() {
     _stopHeartbeat();
+    _socketSubscription?.cancel();
+    _socketSubscription = null;
     _socket = null;
     _updateState(IbWebSocketState.disconnected);
 

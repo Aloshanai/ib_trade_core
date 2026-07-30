@@ -62,15 +62,16 @@ class CookieClient extends http.BaseClient {
   List<String> _splitSetCookieHeader(String header) {
     final List<String> cookies = [];
     int start = 0;
+    final days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
     for (int i = 0; i < header.length; i++) {
       if (header[i] == ',') {
-        // Look ahead to make sure we don't split on a date comma
-        // Date commas are typically inside "Expires=day, dd-mon-yyyy hh:mm:ss GMT"
+        // Look behind to make sure we don't split on a date comma
+        // Date commas are preceded by the day name, e.g. "Expires=Thu, 01-Jan-1970 00:00:00 GMT"
+        final before = header.substring(start, i).trim().toLowerCase();
         bool isDate = false;
-        final remaining = header.substring(i + 1).trimLeft();
-        final days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
         for (final day in days) {
-          if (remaining.toLowerCase().startsWith(day)) {
+          if (before.endsWith(day)) {
             isDate = true;
             break;
           }
