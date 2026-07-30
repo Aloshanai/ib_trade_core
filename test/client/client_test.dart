@@ -65,7 +65,9 @@ void main() {
       expect(cookieClient.cookies['JSESSIONID'], equals('abcdef'));
     });
 
-    test('should handle day name cookie date split correctly for all day abbreviations', () async {
+    test(
+        'should handle day name cookie date split correctly for all day abbreviations',
+        () async {
       final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       for (final day in days) {
         final mockInner = MockClient((request) async {

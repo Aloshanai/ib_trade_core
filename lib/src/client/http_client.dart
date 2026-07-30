@@ -13,7 +13,8 @@ class HttpClient extends http.BaseClient {
   /// Note: SSL bypass only applies on VM/desktop platforms. On Web platforms,
   /// this is governed by browser trust policies.
   HttpClient({bool bypassSslVerification = false})
-      : _delegate = createPlatformClient(bypassSslVerification: bypassSslVerification);
+      : _delegate =
+            createPlatformClient(bypassSslVerification: bypassSslVerification);
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) {
@@ -26,4 +27,3 @@ class HttpClient extends http.BaseClient {
     super.close();
   }
 }
-

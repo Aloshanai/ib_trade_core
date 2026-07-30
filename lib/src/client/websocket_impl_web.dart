@@ -39,7 +39,7 @@ Future<BaseWebSocketConnection> connectWebSocket(
 }) async {
   final socket = html.WebSocket(uri.toString());
   final completer = Completer<BaseWebSocketConnection>();
-  
+
   StreamSubscription? openSubscription;
   StreamSubscription? errorSubscription;
 

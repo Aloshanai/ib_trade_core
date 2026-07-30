@@ -11,5 +11,6 @@ Future<BaseWebSocketConnection> connectWebSocket(
   Map<String, String>? headers,
   bool bypassSslVerification = false,
 }) {
-  throw UnsupportedError('Cannot connect to WebSocket without io or html libraries.');
+  throw UnsupportedError(
+      'Cannot connect to WebSocket without io or html libraries.');
 }
