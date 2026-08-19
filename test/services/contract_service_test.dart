@@ -81,7 +81,7 @@ void main() {
       expect(hits, hasLength(1));
       expect(hits.first.conid, 265598);
       expect(hits.first.symbol, 'AAPL');
-      expect(hits.first.secType, SecurityType.STK);
+      expect(hits.first.secType, SecurityType.stk);
     });
 
     test('getContractInfo should return contract specifications', () async {
@@ -94,7 +94,7 @@ void main() {
     test('getOptionStrikes should return option chain strikes and expirations',
         () async {
       final strikes =
-          await service.getOptionStrikes(265598, SecurityType.OPT, 'SEP26');
+          await service.getOptionStrikes(265598, SecurityType.opt, 'SEP26');
       expect(strikes.underlyingConid, 265598);
       expect(strikes.expirationDates, contains('2026-09-18'));
       expect(strikes.callStrikes, contains(150.0));

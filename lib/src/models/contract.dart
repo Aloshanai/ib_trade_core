@@ -1,20 +1,21 @@
 /// Security types supported by IBKR.
 enum SecurityType {
-  STK('STK'),
-  OPT('OPT'),
-  FUT('FUT'),
-  CASH('CASH'),
-  CRYPTO('CRYPTO'),
-  IND('IND');
+  stk('STK'),
+  opt('OPT'),
+  fut('FUT'),
+  cash('CASH'),
+  crypto('CRYPTO'),
+  ind('IND');
 
   final String code;
   const SecurityType(this.code);
 
   static SecurityType fromString(String val) {
+    final upper = val.toUpperCase();
     for (final type in SecurityType.values) {
-      if (type.code == val || type.name == val) return type;
+      if (type.code == upper || type.name.toUpperCase() == upper) return type;
     }
-    return SecurityType.STK;
+    return SecurityType.stk;
   }
 }
 

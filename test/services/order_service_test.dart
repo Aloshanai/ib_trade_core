@@ -9,10 +9,8 @@ void main() {
     late MockGatewayHttp mockGateway;
     late http.Client client;
     late OrderService service;
-    late bool challengeHandled;
 
     setUp(() {
-      challengeHandled = false;
       mockGateway = MockGatewayHttp();
 
       mockGateway.registerRoute(
@@ -105,8 +103,8 @@ void main() {
     test('placeOrders should submit single order', () async {
       final req = OrderRequest(
         conid: 265598,
-        orderType: OrderType.LMT,
-        side: OrderSide.BUY,
+        orderType: OrderType.lmt,
+        side: OrderSide.buy,
         quantity: 100.0,
         price: 150.0,
       );
@@ -118,8 +116,8 @@ void main() {
     test('previewOrder should return margin impact', () async {
       final req = OrderRequest(
         conid: 265598,
-        orderType: OrderType.LMT,
-        side: OrderSide.BUY,
+        orderType: OrderType.lmt,
+        side: OrderSide.buy,
         quantity: 100.0,
         price: 150.0,
       );
@@ -161,8 +159,8 @@ void main() {
 
       final req = OrderRequest(
         conid: 265598,
-        orderType: OrderType.LMT,
-        side: OrderSide.BUY,
+        orderType: OrderType.lmt,
+        side: OrderSide.buy,
         quantity: 100.0,
         price: 200.0,
       );

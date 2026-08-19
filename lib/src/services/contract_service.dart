@@ -93,7 +93,7 @@ class ContractService {
     final uri = Uri.parse(_cleanUrl('/iserver/secdef/info')).replace(
       queryParameters: {
         'conid': conid.toString(),
-        'secType': SecurityType.FUT.code,
+        'secType': SecurityType.fut.code,
       },
     );
 

@@ -1,5 +1,3 @@
-import 'auth_status.dart';
-
 export 'auth_status.dart';
 
 /// Single Sign-On (SSO) validation result from `/sso/validate`.

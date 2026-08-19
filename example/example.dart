@@ -2,50 +2,41 @@
 import 'package:ib_trade_core/ib_trade_core.dart';
 
 void main() async {
-  // 1. Configure the Gateway Settings
+  // 1. Configure Gateway Settings
   const config = GatewayConfig(
     host: 'localhost',
     port: 5000,
-    useSsl: false, // Set to true if Gateway has SSL enabled
+    useSsl: true,
+    bypassSslVerification: true,
   );
 
-  print('Configured Gateway: ${config.host}:${config.port}');
+  print('Configured Gateway Base URL: ${config.baseUrl}');
 
-  // 2. Initialize the HTTP Client with Cookie support
-  // Wrapping the custom HttpClient which handles platform-specific client creation.
-  final innerClient =
-      HttpClient(bypassSslVerification: config.bypassSslVerification);
-  final cookieClient = CookieClient(innerClient);
+  // 2. Initialize Unified Client Facade
+  final client = IbTradeCoreClient(config: config);
 
-  // 3. Establish WebSocket connection
-  final wsUrl = Uri.parse('ws://${config.host}:${config.port}/v1/api/ws');
-  final wsConnection = IbWebSocketConnection(
-    wsUrl,
-    cookieClient: cookieClient,
-  );
-
-  // Monitor WebSocket states
-  wsConnection.stateChanges.listen((state) {
-    print('WebSocket State changed: $state');
+  // 3. Monitor WebSocket streaming events
+  client.streaming.quoteStream.listen((event) {
+    print('Real-Time Quote -> ConID: ${event.conid}, Last: ${event.lastPrice}');
   });
 
-  // Listen to messages
-  wsConnection.messages.listen((message) {
-    print('Received message: $message');
-  });
+  // 4. Connect to Gateway & WebSocket
+  print('Connecting to IBKR Gateway...');
+  await client.connect();
 
-  // Listen to errors
-  wsConnection.errors.listen((error) {
-    print('WebSocket error: $error');
-  });
+  // 5. Query authentication status
+  final authStatus = await client.session.getAuthStatus();
+  print('Authentication Status: $authStatus');
 
-  // Connect to the WebSocket
-  print('Connecting to $wsUrl...');
-  await wsConnection.connect();
+  // 6. Search for financial contracts
+  final hits =
+      await client.contracts.searchContracts('AAPL', secType: SecurityType.stk);
+  if (hits.isNotEmpty) {
+    print('Found contract: ${hits.first.symbol} (conid: ${hits.first.conid})');
+  }
 
-  // Close connection after some time (for demo purposes)
-  await Future.delayed(const Duration(seconds: 5));
+  // 7. Cleanup & Disconnect
+  await Future.delayed(const Duration(seconds: 2));
   print('Disconnecting...');
-  await wsConnection.disconnect();
-  cookieClient.close();
+  await client.dispose();
 }

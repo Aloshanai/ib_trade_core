@@ -1,51 +1,57 @@
 /// Order types supported by IBKR Client Portal API.
 enum OrderType {
-  LMT('LMT'),
-  MKT('MKT'),
-  STP('STP'),
-  STP_LMT('STP LMT'),
-  TRAIL('TRAIL');
+  lmt('LMT'),
+  mkt('MKT'),
+  stp('STP'),
+  stpLmt('STP LMT'),
+  trail('TRAIL');
 
   final String code;
   const OrderType(this.code);
 
   static OrderType fromString(String val) {
+    final upper = val.toUpperCase().replaceAll(' ', '_');
     for (final type in OrderType.values) {
-      if (type.code == val || type.name == val) return type;
+      if (type.code == val ||
+          type.code == upper ||
+          type.name.toUpperCase() == upper) {
+        return type;
+      }
     }
-    return OrderType.LMT;
+    return OrderType.lmt;
   }
 }
 
 /// Order side (BUY or SELL).
 enum OrderSide {
-  BUY('BUY'),
-  SELL('SELL');
+  buy('BUY'),
+  sell('SELL');
 
   final String code;
   const OrderSide(this.code);
 
   static OrderSide fromString(String val) {
-    if (val.toUpperCase() == 'SELL') return OrderSide.SELL;
-    return OrderSide.BUY;
+    if (val.toUpperCase() == 'SELL') return OrderSide.sell;
+    return OrderSide.buy;
   }
 }
 
 /// Time-in-force (TIF) order duration.
 enum TimeInForce {
-  DAY('DAY'),
-  GTC('GTC'),
-  IOC('IOC'),
-  OPG('OPG');
+  day('DAY'),
+  gtc('GTC'),
+  ioc('IOC'),
+  opg('OPG');
 
   final String code;
   const TimeInForce(this.code);
 
   static TimeInForce fromString(String val) {
+    final upper = val.toUpperCase();
     for (final tif in TimeInForce.values) {
-      if (tif.code == val || tif.name == val) return tif;
+      if (tif.code == upper || tif.name.toUpperCase() == upper) return tif;
     }
-    return TimeInForce.DAY;
+    return TimeInForce.day;
   }
 }
 
@@ -76,7 +82,7 @@ class OrderRequest {
     this.price,
     this.auxPrice,
     this.ticker,
-    this.tif = TimeInForce.DAY,
+    this.tif = TimeInForce.day,
     this.outsideRth = false,
     this.listingExchange,
     this.origCustomerOrderId,
