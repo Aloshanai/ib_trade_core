@@ -35,6 +35,15 @@ class AuthStatus {
     );
   }
 
+  /// Converts [AuthStatus] to a JSON map.
+  Map<String, dynamic> toJson() => {
+        'authenticated': authenticated,
+        'connected': connected,
+        'competing': competing,
+        if (username != null) 'username': username,
+        if (failReason != null) 'fail': failReason,
+      };
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

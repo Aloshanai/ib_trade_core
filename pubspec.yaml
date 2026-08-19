@@ -1,6 +1,6 @@
 name: ib_trade_core
 description: Core foundation for Interactive Brokers (IBKR) Dart client SDK.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/Aloshanai/ib_trade_core
 repository: https://github.com/Aloshanai/ib_trade_core
 issue_tracker: https://github.com/Aloshanai/ib_trade_core/issues

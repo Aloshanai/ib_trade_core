@@ -107,6 +107,9 @@ class GatewayConfig {
     return Uri(scheme: scheme, host: host, port: port, path: '/v1/api/');
   }
 
+  /// Helper getter for base URL string.
+  String get baseUrl => baseHttpUri.toString();
+
   /// Helper to convert the configuration to a base WebSocket Uri.
   Uri get baseWsUri {
     final scheme = useSsl ? 'wss' : 'ws';

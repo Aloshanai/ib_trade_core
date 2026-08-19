@@ -13,7 +13,8 @@ void main() async {
 
   // 2. Initialize the HTTP Client with Cookie support
   // Wrapping the custom HttpClient which handles platform-specific client creation.
-  final innerClient = HttpClient(bypassSslVerification: config.bypassSslVerification);
+  final innerClient =
+      HttpClient(bypassSslVerification: config.bypassSslVerification);
   final cookieClient = CookieClient(innerClient);
 
   // 3. Establish WebSocket connection

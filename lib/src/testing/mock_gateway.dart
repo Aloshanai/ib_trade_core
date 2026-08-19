@@ -61,6 +61,38 @@ class IbMockPayloads {
       'change': 0.50,
     }
   ];
+
+  /// Standard execution history payload.
+  static const List<Map<String, dynamic>> executionHistory = [
+    {
+      'executionId': 'exec_001',
+      'orderId': '1001',
+      'conid': 265598,
+      'symbol': 'AAPL',
+      'side': 'BUY',
+      'price': 150.25,
+      'quantity': 50.0,
+      'time': '2026-08-19T10:00:00Z',
+      'account': 'DU123456',
+      'commission': 1.0,
+      'exchange': 'NASDAQ',
+    }
+  ];
+
+  /// Standard SSO validation payload.
+  static const Map<String, dynamic> ssoValidateSuccess = {
+    'SSOExpires': 86400000,
+    'user_name': 'edemo',
+    'user_id': 12345,
+    'RESULT': true,
+    'AUTH_TIME': 1700000000,
+  };
+
+  /// Standard logout payload.
+  static const Map<String, dynamic> logoutSuccess = {
+    'status': true,
+    'message': 'Logged out successfully',
+  };
 }
 
 /// Helper to build a mock HTTP client that simulates the IBKR Gateway endpoints.
@@ -94,9 +126,26 @@ class MockGatewayHttp {
         );
       }
 
-      if (path.endsWith('/iserver/auth/status')) {
+      if (path.endsWith('/iserver/auth/status') ||
+          path.endsWith('/iserver/reauthenticate')) {
         return http.Response(
           jsonEncode(IbMockPayloads.authStatusSuccess),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      }
+
+      if (path.endsWith('/sso/validate')) {
+        return http.Response(
+          jsonEncode(IbMockPayloads.ssoValidateSuccess),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      }
+
+      if (path.endsWith('/logout')) {
+        return http.Response(
+          jsonEncode(IbMockPayloads.logoutSuccess),
           200,
           headers: {'content-type': 'application/json'},
         );
